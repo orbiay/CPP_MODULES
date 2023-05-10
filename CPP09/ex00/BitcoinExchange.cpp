@@ -128,11 +128,11 @@ int BitcoinExchange::check_line(std::string line,std::map<std::string,float> &da
     {
         std::cout<<"Error: bad input => "<<line.substr(0,10)<<std::endl;
         return 0;
+    }
     if (get_size(ss) != 3)
     {
         std::cout<< "Error : something is wrong in your input file."<<std::endl;
         return 0;
-    }
     }
     if (std::atof(last.c_str()) > 1000 || std::atof(last.c_str()) < 0 || !is_dicimal(last))
     {

@@ -9,23 +9,25 @@ int Rpn::is_operator(char c)
         return 0;
     return 1;
 }
-bool Rpn::is_space(char c)
+bool is_space(char c)
 {
     if (c == '\t' || c == ' ')
         return true;
     return false;
 }
-int Rpn::check_errors(char *av)
+
+int Rpn::check_errors(std::string av)
 {
     int i = 0;
     int op = 0;
     int digits = 0;
-    if (strlen(av) < 3)
+    av.erase(std::remove_if(av.begin(), av.end(), is_space), av.end());
+    if (strlen(av.c_str()) < 3)
     {
         std::cout<<"Error : Your input is too short."<<std::endl;
         return 0;
     }
-    if (strlen(av) >= 3 && is_operator(av[1]))
+    if (strlen(av.c_str()) >= 3 && is_operator(av[1]))
     {
         std::cout<<"Error : Your input contains an operator symbol in the wrong place"<<std::endl;
         return 0;
@@ -48,12 +50,7 @@ int Rpn::check_errors(char *av)
         }
         i++;
     }
-    if (op >= digits)
-    {
-        std::cout<<"Error : your input isn't valid"<<std::endl;
-        return 0;
-    }
-    if (op !=  digits - 1)
+    if (op >= digits || op !=  digits - 1)
     {
         std::cout<<"Error : your input isn't valid"<<std::endl;
         return 0;
@@ -70,7 +67,11 @@ int Rpn::result(int num1,int num2,char op)
     if (op == '*')
         return num1 * num2;
     else
+    {
+        if (num2 == 0)
+            throw(std::invalid_argument("You can't divide by 0")); 
         return num1 / num2;
+    }
 }
 
 void Rpn::calculator(std::string str)
@@ -86,11 +87,13 @@ void Rpn::calculator(std::string str)
             nums.push((*it - 48));
         else if (is_operator(*it))
         {
-           num2 = nums.top();
-           nums.pop();
-           num1 = nums.top();
-           nums.pop();
-           nums.push(result(num1,num2,*it));
+            if (nums.size() < 2)
+                throw std::invalid_argument("Your arguments are invalid");
+            num2 = nums.top();
+            nums.pop();
+            num1 = nums.top();
+            nums.pop();
+            nums.push(result(num1,num2,*it));
         }
     }
     std::cout<<"result = "<<nums.top();
